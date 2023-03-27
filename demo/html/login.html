@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>SDK</title>
+        <script src="jlink-sdk.js"></script>
+        <link type="text/css" rel="stylesheet" href="./demo.css">
+    </head>
+
+    <body>
+        <noscript>
+            <strong>Please enable JavaScript to continue.</strong>
+        </noscript>
+        <div id="app">
+            <form>
+                <h3>Login</h3>
+                <label>
+                    <span>username</span>
+                    <input id="account" type="text" value="" />
+                </label>
+                <label>
+                    <span>password</span>
+                    <input id="pass" type="password" value=""/>
+                </label>
+                <label>
+                    <button type="button" onclick="onSubmit()">Sign in</button>
+                </label>
+            </form>
+        </div>
+    </body>
+    <script>
+        let jlsdk = window.localStorage.getItem('JLSDK')
+
+        Object.assign(JLSDK,JSON.parse(jlsdk))
+
+        function onSubmit(){
+            let accountNode = document.getElementById('account')
+            let passNode = document.getElementById('pass')
+            let data = {
+                account:accountNode.value,
+                pass:pass.value
+            }
+            JLSDK.login(data).then(res => {
+                const result = JSON.parse(decodeURIComponent(res.data || '{}'))
+                let authorization = result.data.accessToken
+                
+                JLSDK.authorize(authorization)
+                console.log(JLSDK);
+                window.localStorage.setItem('JLSDK',JSON.stringify(JLSDK))
+                
+                location.href = './list.html'
+            })
+        }
+    </script>
+</html>

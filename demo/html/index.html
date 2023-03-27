@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>SDK</title>
+        <script src="jlink-sdk.js"></script>
+        <link type="text/css" rel="stylesheet" href="./demo.css">
+    </head>
+
+    <body>
+        <noscript>
+            <strong>Please enable JavaScript to continue.</strong>
+        </noscript>
+        <div id="app">
+            <form>
+                <h3>Initialization</h3>
+                <label>
+                    <span>appSecret</span>
+                    <input id="appSecret" type="text" value="90f8bc17be2a425db6068c749dee4f5d" />
+                </label>
+                <label>
+                    <span>movedCard</span>
+                    <input id="movedCard" type="text" value="2" />
+                </label>
+                <label>
+                    <span>appKey</span>
+                    <input id="appKey" type="text" value="0621ef206a1d4cafbe0c5545c3882ea8" />
+                </label>
+                <label>
+                    <span>uuid</span>
+                    <input id="uuid" type="text" value="e0534f3240274897821a126be19b6d46" />
+                </label>
+                <label>
+                    <button type="button" onclick="onSubmit()">Next</button>
+                </label>
+            </form>
+            <div>
+                Field Description：
+                <a href="https://developer.jftech.com/docs/?menusId=e65803db0d0b446bb8bca02c6010f9f7&lang=en" target="_blank">https://developer.jftech.com/docs/?menusId=e65803db0d0b446bb8bca02c6010f9f7&lang=en</a>
+            </div>
+        </div>
+    </body>
+    <script>
+        function onSubmit(){
+
+            let appSecret = document.getElementById('appSecret')
+            let movedCard = document.getElementById('movedCard')
+            let appKey = document.getElementById('appKey')
+            let uuid = document.getElementById('uuid')
+
+            JLSDK.init({
+                authorizationAppKey: appKey.value,
+                lang: navigator.language,
+                appSecret:appSecret.value,
+                movedCard:movedCard.value,
+                appKey:appKey.value,
+                uuid:uuid.value
+            })
+
+            window.localStorage.setItem('JLSDK',JSON.stringify(JLSDK))
+
+            location.href = './register.html'
+        }
+    </script>
+</html>

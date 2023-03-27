@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>SDK</title>
+        <script src="jlink-sdk.js"></script>
+        <link type="text/css" rel="stylesheet" href="./demo.css">
+    </head>
+
+    <body>
+        <noscript>
+            <strong>Please enable JavaScript to continue.</strong>
+        </noscript>
+        <div id="app">
+            <div style="text-align: center;">
+                <h3>Family</h3>
+                <select id="select"></select>
+            </div>
+            <div id="devices" style="clear:both;overflow: hidden;"></div>
+            
+            <form>
+                <h3>Get or customize device information</h3>
+                <label>
+                    <span>sn</span>
+                    <input id="sn" type="text" value="" />
+                </label>
+                <label>
+                    <span>adminToken</span>
+                    <input id="adminToken" type="text" value=""/>
+                </label>
+                <label>
+                    <button type="button" onclick="onSubmit()">Device login</button>
+                </label>
+            </form>
+        </div>
+    </body>
+    <script>
+        let jlsdk = window.localStorage.getItem('JLSDK')
+
+        Object.assign(JLSDK,JSON.parse(jlsdk))
+
+        let userId = ''
+        let groupList = []
+        let groupId = ''
+        let deviceList = []
+        let sn = ''
+        let adminToken = ''
+
+        userinfo2()
+
+        iotGetUserGroupListByPage()
+
+        document.getElementById('select').addEventListener('change',function(){
+            groupId = this.options[this.selectedIndex].value
+            iotGetDeviceListByPage()
+        })
+
+        document.getElementById('devices').addEventListener('click',function(ev){
+            sn = ev.target.id
+            adminToken = ev.target.dataset.token
+            document.getElementById('sn').value = sn
+            document.getElementById('adminToken').value = adminToken
+        })
+
+        function userinfo2(){
+            JLSDK.userinfo2().then(res => {
+                const result = JSON.parse(decodeURIComponent(res.data || '{}'))
+                userId = result.data.userId
+                console.log('userinfo2',result,userId)
+            })
+        }
+
+        function iotGetUserGroupListByPage(){
+            let data = {
+                page: 1,
+                limit: 999
+            }
+            JLSDK.iotGetUserGroupListByPage(data).then(res => {
+                groupList = res && res.data && res.data.data && res.data.data.data
+                console.log('groupList',res,groupList);
+
+                let options = '<option>select</option>'
+                groupList.forEach(item => {
+                    options += `<option value="${item.id}">${item.groupName}</option>`
+                });
+                document.getElementById('select').innerHTML = options
+            })
+        }
+
+        function iotGetDeviceListByPage(){
+            let data = {
+                userGroupId:groupId,
+                page: 1,
+                limit: 999
+            }
+            JLSDK.iotGetDeviceListByPage(data).then(res => {
+                deviceList = res && res.data && res.data.data && res.data.data.data
+                let divNode = ''
+                deviceList.forEach(item => {
+                    divNode += `<div class="item" id="${item.deviceNo}" data-token="${item.adminToken}">${item.deviceName}</div>`
+                })
+                document.getElementById('devices').innerHTML = divNode
+            })
+        }
+        
+        function onSubmit(){
+
+            JLSDK.setDevice({
+                sn:sn,
+                adminToken:adminToken
+            })
+
+            window.localStorage.setItem('JLSDK',JSON.stringify(JLSDK))
+
+            location.href = './info.html'
+        }
+    </script>
+</html>

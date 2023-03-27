@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>SDK</title>
+        <script src="jlink-sdk.js"></script>
+        <link type="text/css" rel="stylesheet" href="./demo.css">
+    </head>
+
+    <body>
+        <noscript>
+            <strong>Please enable JavaScript to continue.</strong>
+        </noscript>
+        <div id="app">
+            <form>
+                <h3>Register</h3>
+                <label>
+                    <span>username</span>
+                    <input id="name" type="text" value="" />
+                </label>
+                <label>
+                    <span>password</span>
+                    <input id="password" type="password" value=""/>
+                </label>
+                <label>
+                    <span>confirm password</span>
+                    <input id="confirmPass" type="password" value=""/>
+                </label>
+                <label>
+                    <span>email</span>
+                    <div style="flex:3;display: flex;">
+                        <input id="mail" type="text" value=""/>
+                        <button type="button" onclick="onSendCode()">Send code</button>
+                    </div>
+                </label>
+                <label>
+                    <span>code</span>
+                    <input id="verCode" type="text" value=""/>
+                </label>
+                <label>
+                    <button type="button" onclick="onSubmit()">Sign up</button>
+                    <button type="button" onclick="onLogin()">Sign in</button>
+                </label>
+            </form>
+        </div>
+    </body>
+    <script>
+        let jlsdk = window.localStorage.getItem('JLSDK')
+
+        Object.assign(JLSDK,JSON.parse(jlsdk))
+
+        function onSendCode(){
+            let mailNode = document.getElementById('mail')
+            let data = {
+                mail:mailNode.value,
+                type:'re',
+                language:1,
+                username:''
+            }
+            JLSDK.scmail(data).then(res => {
+                const result = JSON.parse(decodeURIComponent(res.data || '{}'))
+                console.log(result);
+            })
+        }
+
+        function onSubmit(){
+            let nameNode = document.getElementById('name')
+            let passwordNode = document.getElementById('password')
+            let confirmPassNode = document.getElementById('confirmPass')
+            let mailNode = document.getElementById('mail')
+            let verCodeNode = document.getElementById('verCode')
+            let data = {
+                name:nameNode.value,
+                password:passwordNode.value,
+                confirmPass:confirmPassNode.value,
+                mail:mailNode.value,
+                verCode:verCodeNode.value
+            }
+            JLSDK.userregMail(data).then(res => {
+                const result = JSON.parse(decodeURIComponent(res.data || '{}'))
+                console.log(result);
+                if(result.code === 2000){
+                    location.href = './login.html'
+                }
+            })
+        }
+
+        function onLogin(){
+            location.href = './login.html'
+        }
+    </script>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>SDK</title>
+        <script src="jlink-sdk.js"></script>
+        <link type="text/css" rel="stylesheet" href="./demo.css">
+    </head>
+
+    <body>
+        <noscript>
+            <strong>Please enable JavaScript to continue.</strong>
+        </noscript>
+        <div id="app">
+            <div class="content">
+                <div>
+                    <button onclick="propIncludes()">Child lock</button>
+                    <div id="hasChildLockSwitch"></div>
+                </div>
+                <div>
+                    <button onclick="iotPropStatus()">Getting device status</button>
+                    <div id="status"></div>
+                </div>
+                <div>
+                    <button onclick="iotQueryTotalElectricity()">Electricity</button>
+                    <div id="total"></div>
+                </div>
+                <div>
+                    <button onclick="getInfo()">Basic information</button>
+                    <div id="info"></div>
+                </div>
+                <div>
+                    <button id="onOffButton" onClick="tapOnOff()">on</button>
+                    <div id="onOff"></div>
+                </div>
+        
+                <div class="popup" id="popup">loading</div>
+            </div>
+        </div>
+    </body>
+    <script>
+        let jlsdk = window.localStorage.getItem('JLSDK')
+
+        Object.assign(JLSDK,JSON.parse(jlsdk))
+        
+        let hasChildLockSwitch = document.getElementById('hasChildLockSwitch')
+        let status = document.getElementById('status')
+        let total = document.getElementById('total')
+        let info = document.getElementById('info')
+        let onOff = false
+        let onOffButton = document.getElementById('onOffButton')
+        let onOffNode = document.getElementById('onOff')
+        let popupNode = document.getElementById('popup')
+        popupNode.style.display = 'none'
+
+        getPowerSwitch()
+
+        function propIncludes() {
+            popupNode.style.display = 'block'
+            JLSDK.propIncludes(['childLockSwitch']).then(res => {
+                hasChildLockSwitch.innerHTML = res
+                popupNode.style.display = 'none'
+                console.log('JLSDK',JLSDK);
+            }).catch(err => {
+                popupNode.style.display = 'none'
+                console.log('propIncludes err:',err);
+            })
+        }
+
+        function iotPropStatus() {
+            popupNode.style.display = 'block'
+            JLSDK.iotPropStatus({
+                sn: JLSDK.sn,
+                props: ['plugCurrent', 'plugPower', 'plugVoltage']
+            }).then(res => {
+                console.log('Equipment Status:',res); 
+                status.innerHTML = JSON.stringify(res.data.data)
+                popupNode.style.display = 'none'
+                console.log('JLSDK',JLSDK);
+            }).catch(err => {
+                popupNode.style.display = 'none'
+                console.log('iotPropStatus err:',err);
+            })
+        }
+
+        function iotQueryTotalElectricity() {
+            popupNode.style.display = 'block'
+            JLSDK.iotQueryTotalElectricity({
+                deviceSn: JLSDK.sn,
+            }).then(res => {
+                total.innerHTML = JSON.stringify(res.data.data)
+                popupNode.style.display = 'none'
+                console.log('JLSDK',JLSDK);
+            }).catch(err => {
+                popupNode.style.display = 'none'
+                console.log('iotQueryTotalElectricity err:',err);
+            })
+        }
+
+        function getInfo() {
+            popupNode.style.display = 'block'
+            JLSDK.getInfo({
+                Name: 'SystemInfo'
+            }, {
+                tokenSuccess: res => {
+                    console.log('tokenSuccess');
+                },
+                tokenFail: res => {
+                    console.log('tokenFail');
+                },
+                tokenComplete: res => {
+                    console.log('tokenComplete');
+                },
+                tokenError: err => {
+                    console.log('tokenError');
+                },
+                loginSuccess: res => {
+                    console.log('loginSuccess');
+                },
+                loginRetFail: res => {
+                    console.log('loginRetFail');
+                },
+                loginFail: res => {
+                    console.log('loginFail');
+                },
+                loginError: err => {
+                    console.log('loginError');
+                },
+                loginComplete: res => {
+                    console.log('loginComplete');
+                }
+            }).then(res => {
+                info.innerHTML = JSON.stringify(res.data.data.SystemInfo)
+                popupNode.style.display = 'none'
+                console.log('JLSDK',JLSDK);
+            }).catch(err => {
+                popupNode.style.display = 'none'
+                console.log('getInfo err:',err);
+            })
+        }
+
+        function getPowerSwitch() {
+            popupNode.style.display = 'block'
+
+            let data = {
+                sn: JLSDK.sn,
+                props: ['powerSwitch']
+            }
+
+            JLSDK.iotPropGet(data)
+            .then(response => {
+                console.log(response);
+                if(response && response.data && response.data.code === 2000 && response.data.data && response.data.data.Ret === 100){
+                    onOff = response.data.data.props && response.data.data.props.powerSwitch && response.data.data.props.powerSwitch.action === 'ON'
+                    onOffNode.innerHTML = JSON.stringify(response.data)
+                    onOffButton.innerHTML = !onOff ? 'on' : 'off'
+                }
+                popupNode.style.display = 'none'
+            })
+            .catch(err => {
+                popupNode.style.display = 'none'
+                console.log(err)
+            })
+        }
+
+        function tapOnOff() {
+            popupNode.style.display = 'block'
+
+            let data = {
+                sn: JLSDK.sn,
+                props: {
+                    powerSwitch: 'SWITCH'
+                }
+            }
+            JLSDK.iotPropSet(data)
+            .then(res => {
+                console.log(res);
+                if(res && res.data && res.data.code === 2000 && res.data.data.Ret === 100){
+                    onOff = !onOff
+                    onOffNode.innerHTML = JSON.stringify(res.data)
+                    onOffButton.innerHTML = !onOff ? 'on' : 'off'
+                }
+                popupNode.style.display = 'none'
+            }).catch(err => {
+                popupNode.style.display = 'none'
+                console.log(err)
+            })
+        }
+    </script>
+</html>

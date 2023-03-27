@@ -1,0 +1,19 @@
+.content {
+    padding: 20px;
+}
+
+button {
+    margin: 10px 0;
+}
+
+.popup {
+    position: fixed;
+    top: calc(50% - 50px);
+    left: calc(50% - 50px);
+    width: 100px;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.75);
+    text-align: center;
+    line-height: 100px;
+    color: white;
+}

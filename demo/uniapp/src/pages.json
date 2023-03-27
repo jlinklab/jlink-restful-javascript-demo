@@ -1,0 +1,40 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "SDK-uniapp"
+			}
+		},
+        {
+			"path": "pages/register/register",
+			"style": {
+				"navigationBarTitleText": "SDK-uniapp"
+			}
+		},
+        {
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "SDK-uniapp"
+			}
+		},
+        {
+			"path": "pages/list/list",
+			"style": {
+				"navigationBarTitleText": "SDK-uniapp"
+			}
+		},
+        {
+			"path": "pages/info/info",
+			"style": {
+				"navigationBarTitleText": "SDK-uniapp"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}

@@ -1,0 +1,22 @@
+h3{
+    text-align: center;
+    padding: 10px 0;
+}
+label{
+    display: flex;
+    align-items: center;
+    padding: 4px 20px;
+}
+label span{
+    flex: 1;
+    padding-right:10px;
+    text-align: right;
+}
+label input{
+    flex: 3;
+    padding: 8px;
+    border: 1px solid #EEE;
+}
+label button{
+    width: 100%;
+}
